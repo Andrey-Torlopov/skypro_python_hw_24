@@ -1,8 +1,7 @@
 import re
+from typing import Iterable
 
-def read_file_generator(filepath: str):
-    # TODO: Не понятно какой тип аннотации тут надо передать,
-    # чтобы потом ничего не поломалось.
+def read_file_generator(filepath: str) -> Iterable:
     with open(filepath, 'r', encoding='utf-8') as file:
         while True:
             line = file.readline()
@@ -11,11 +10,11 @@ def read_file_generator(filepath: str):
             yield line.strip('\n')
 
 
-def filter_query(param: str, data: list[str]) -> list[str]:
+def filter_query(param: str, data: Iterable) -> Iterable:
     return list(filter(lambda row: param in row, data))
 
 
-def map_query(param: str, data: list[str]) -> list[str]:
+def map_query(param: str, data: Iterable) -> Iterable:
     try:
         col = int(param)
     except ValueError:
@@ -26,13 +25,13 @@ def map_query(param: str, data: list[str]) -> list[str]:
         return []
 
 
-def unique_query(data: list[str],
+def unique_query(data: Iterable,
                  *args: str,
-                 **kwargs: dict[str, str]) -> list[str]:
+                 **kwargs: dict[str, str]) -> Iterable:
     return list(set(data))
 
 
-def sort_query(param: str, data: list[str]) -> list[str]:
+def sort_query(param: str, data: Iterable) -> Iterable:
     if param == "asc":
         return sorted(data)
     elif param == "desc":
@@ -41,16 +40,16 @@ def sort_query(param: str, data: list[str]) -> list[str]:
         return data
 
 
-def limit_query(param: str, data: list[str]) -> list[str]:
+def limit_query(param: str, data: Iterable) -> Iterable:
     try:
         limit = int(param)
     except ValueError:
         return data
+    
+    return list(data)[:limit]
 
-    return data[:limit]
 
-
-def regexp_query(param: str, data: list[str]) -> list[str]:
+def regexp_query(param: str, data: Iterable) -> Iterable:
     result = []
     for item in data:
         regexp = re.compile(param)

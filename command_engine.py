@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from helpers import read_file_generator, filter_query, map_query
 from helpers import sort_query, limit_query, unique_query, regexp_query
-from typing import List
+from typing import Iterable
 
 
 @dataclass(slots=False)
@@ -16,19 +16,15 @@ class CommandEnginge:
     filename: str
     _params: dict[str, str]
 
-    def __init__(self, params: dict[str, dict]) -> None:
-        params_value = params.get('queries')
-        if params_value is None:
-            raise Exception("Can't parse params!")
-
-        self._params = params_value
+    def __init__(self, queries: dict[str, str]) -> None:
+        self._params = queries
         self.commands = []
 
         result = self._prepeare_commands()
         if not result:
-            raise Exception("Can't parse params!")
+            self.commands = []
 
-    def execute(self) -> List[str]:
+    def execute(self) -> Iterable:
         data = read_file_generator(f'data/{self.filename}')
 
         for item in self.commands:
